@@ -39,10 +39,15 @@ const Posts: React.FC = () => {
 
     return (
         <PostsContainer>
-            <DataGrid columns={columns} rows={posts} loading={isLoading} components={{
-                NoRowsOverlay: () => <GridOverlay><Typography color="red">Posts didn't load, please try again later...</Typography>
-                </GridOverlay>
+            <DataGrid columns={columns} rows={posts} loading={isLoading} initialState={{
+                sorting: {
+                    sortModel: [{ field: 'title', sort: 'asc' }],
+                },
             }}
+                components={{
+                    NoRowsOverlay: () => <GridOverlay><Typography color="red">Posts didn't load, please try again later...</Typography>
+                    </GridOverlay>
+                }}
             />
         </PostsContainer>
     );
