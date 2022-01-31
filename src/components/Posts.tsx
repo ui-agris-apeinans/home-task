@@ -103,7 +103,7 @@ const Posts: React.FC = () => {
                         Top Rated Post change time:
                     </Typography>
                     <Typography>
-                        {topPostTime ? moment.tz(Number(topPostTime), 'EET').format("YYYY.MM.DD HH:mm") : '-'}
+                        {topPostTime ? moment.tz(Number(topPostTime), 'EET').format("YYYY.MM.DD. HH:mm") : '-'}
                     </Typography>
                 </div>
             </InfoContainer>
