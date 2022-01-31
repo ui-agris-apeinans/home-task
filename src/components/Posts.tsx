@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { CircularProgress, styled, Typography } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import { styled, Typography } from '@mui/material';
+import { DataGrid, GridOverlay } from '@mui/x-data-grid';
 
 import { postsLink } from '../constants';
 import { Post } from '../types';
@@ -15,13 +15,6 @@ const PostsContainer = styled('div')`
     margin-top: 12px;
 `
 
-const StyledCircularProgress = styled(CircularProgress)`
-    position: absolute;
-    right: 0;
-    left: 0;
-    margin: auto;
-`
-
 const columns = [
     { field: 'id', headerName: 'Id' },
     { field: 'title', headerName: 'Title' },
@@ -29,14 +22,14 @@ const columns = [
 ]
 
 const Posts: React.FC = () => {
-    const [loaded, setIsLoaded] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
     const [posts, setPosts] = useState<Post[]>([])
 
     useEffect(() => {
         callApi(postsLink).then(response => {
             console.log('Posts response', response);
             setTimeout(() => {
-                setIsLoaded(true);
+                setIsLoading(false);
                 if (!response.error) {
                     setPosts(response)
                 };
@@ -46,8 +39,11 @@ const Posts: React.FC = () => {
 
     return (
         <PostsContainer>
-            {loaded ? <>
-                {posts.length ? <DataGrid columns={columns} rows={posts} /> : <Typography color="red">Posts didn't load, please try again later...</Typography>}</> : <StyledCircularProgress />}
+            <DataGrid columns={columns} rows={posts} loading={isLoading} components={{
+                NoRowsOverlay: () => <GridOverlay><Typography color="red">Posts didn't load, please try again later...</Typography>
+                </GridOverlay>
+            }}
+            />
         </PostsContainer>
     );
 }
