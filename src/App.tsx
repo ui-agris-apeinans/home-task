@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Typography, Container } from '@mui/material';
+import React from 'react';
+import { Typography, Container, styled } from '@mui/material';
 
-import './App.css';
-import { postsLink } from './constants';
-import callApi from './services/api';
+import Posts from './components/Posts'
 
-function App() {
-  useEffect(() => {
-    callApi(postsLink).then(res => {
-      console.log(res)
+const StyledContainer = styled(Container)`
+  background-color: #dff0dc;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+`
 
-    })
-  }, [])
-  return (
-    <div className="App">
-      <Container>
-        <Typography variant="h4" align="center" paddingTop="12px">Posts</Typography>
-      </Container>
-    </div>
-  );
-}
+const App: React.FC = () => (
+  <StyledContainer>
+    <Typography variant="h4" align="center" paddingTop="12px">Posts</Typography>
+    <Posts />
+  </StyledContainer>
+)
 
 export default App;
