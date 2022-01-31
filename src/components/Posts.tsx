@@ -98,9 +98,14 @@ const Posts: React.FC = () => {
                 <Typography>
                     No posts selected
                 </Typography>
-                <Typography>
-                    Top Rated Post change time: {topPostTime ? moment.tz(Number(topPostTime), 'EET').format("DD.MM.YYYY HH:mm") : '-'}
-                </Typography>
+                <div>
+                    <Typography>
+                        Top Rated Post change time:
+                    </Typography>
+                    <Typography>
+                        {topPostTime ? moment.tz(Number(topPostTime), 'EET').format("YYYY.MM.DD HH:mm") : '-'}
+                    </Typography>
+                </div>
             </InfoContainer>
             <DataGrid columns={columns} rows={posts} loading={isLoading} initialState={{
                 sorting: {
