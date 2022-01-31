@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { styled, Typography } from '@mui/material';
-import { DataGrid, GridOverlay } from '@mui/x-data-grid';
+import { DataGrid, GridOverlay, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { postsLink } from '../constants';
-import { Post } from '../types';
+import { DataGridPost, Post } from '../types';
 import callApi from '../services/api';
 
 const PostsContainer = styled('div')`
@@ -15,23 +15,50 @@ const PostsContainer = styled('div')`
     margin-top: 12px;
 `
 
-const columns = [
-    { field: 'id', headerName: 'Id' },
-    { field: 'title', headerName: 'Title' },
-    { field: 'body', headerName: 'Body' },
+const CellContainer = styled('span')`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+`
+
+const columns: GridColDef[] = [
+    { field: 'id', headerName: 'Id', width: 50 },
+    {
+        field: 'shortTitle', headerName: 'Title', flex: 0.3, renderCell: (params: GridRenderCellParams) => (
+            <CellContainer>
+                {params.value}
+            </CellContainer>
+        )
+    },
+    {
+        field: 'shortBody', headerName: 'Body', flex: 0.4, renderCell: (params: GridRenderCellParams) => (
+            <CellContainer>
+                {params.value}
+            </CellContainer>
+        ),
+    }
 ]
+
+const maxTextChars = 120;
+
+const shortenText = (text: string) => text.length > maxTextChars ? (text.substr(0, maxTextChars) + "\u2026") : text;
+
+const getDataGridPosts = (posts: Post[]): DataGridPost[] => posts.map(post => ({
+    ...post,
+    shortTitle: shortenText(post.title),
+    shortBody: shortenText(post.body),
+}))
 
 const Posts: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true)
-    const [posts, setPosts] = useState<Post[]>([])
+    const [posts, setPosts] = useState<DataGridPost[]>([])
 
     useEffect(() => {
         callApi(postsLink).then(response => {
-            console.log('Posts response', response);
             setTimeout(() => {
                 setIsLoading(false);
                 if (!response.error) {
-                    setPosts(response)
+                    setPosts(getDataGridPosts(response))
                 };
             }, 450)
         })
@@ -41,7 +68,7 @@ const Posts: React.FC = () => {
         <PostsContainer>
             <DataGrid columns={columns} rows={posts} loading={isLoading} initialState={{
                 sorting: {
-                    sortModel: [{ field: 'title', sort: 'asc' }],
+                    sortModel: [{ field: 'shortTitle', sort: 'asc' }],
                 },
             }}
                 components={{

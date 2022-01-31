@@ -4,3 +4,8 @@ export interface Post {
     userId: number;
     body: string;
 }
+
+export interface DataGridPost extends Post {
+    shortTitle: string;
+    shortBody: string;
+}
