@@ -4,7 +4,7 @@ import { DataGrid, GridOverlay, GridColDef, GridRenderCellParams } from '@mui/x-
 
 import { postsLink } from '../constants';
 import { DataGridPost, Post } from '../types';
-import callApi from '../services/api';
+import { callApi, useLocalStorage } from '../services';
 
 const PostsContainer = styled('div')`
     position: relative;
@@ -20,13 +20,8 @@ const CellContainer = styled('span')`
     text-overflow: ellipsis;
     white-space: nowrap;
 `
-const RadioContainer = styled('span')`
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-`
 
-const getColumns = (setTopPostId: (topPostId: number) => void, topPostId?: number): GridColDef[] => ([
+const getColumns = (setTopPostId: (topPostId: string) => void, topPostId?: string): GridColDef[] => ([
     { field: 'id', headerName: 'Id', align: 'center', width: 50 },
     {
         field: 'shortTitle', headerName: 'Title', flex: 0.2, renderCell: (params: GridRenderCellParams) => (
@@ -48,9 +43,8 @@ const getColumns = (setTopPostId: (topPostId: number) => void, topPostId?: numbe
         align: 'center',
         width: 130,
         renderCell: (params: GridRenderCellParams) => (
-            <Radio checked={topPostId === params.id} value={params.id} onChange={(event) => {
-                setTopPostId(Number(event.target.value))
-                console.log('cloks', event.target.checked)
+            <Radio checked={Number(topPostId) === params.id} value={params.id} onChange={(event) => {
+                setTopPostId(event.target.value)
             }} />
         ),
     }
@@ -67,9 +61,10 @@ const getDataGridPosts = (posts: Post[]): DataGridPost[] => posts.map(post => ({
 }))
 
 const Posts: React.FC = () => {
-    const [isLoading, setIsLoading] = useState(true)
-    const [posts, setPosts] = useState<DataGridPost[]>([])
-    const [topPostId, setTopPostId] = useState<number | undefined>()
+    const [topPostIdStored, setTopPostIdStored] = useLocalStorage('topPostId', '');
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [posts, setPosts] = useState<DataGridPost[]>([]);
 
     useEffect(() => {
         callApi(postsLink).then(response => {
@@ -80,9 +75,10 @@ const Posts: React.FC = () => {
                 };
             }, 450)
         })
-    }, [])
+    }, []);
 
-    const columns = useMemo(() => getColumns(setTopPostId, topPostId), [topPostId, setTopPostId])
+
+    const columns = useMemo(() => getColumns(setTopPostIdStored, topPostIdStored), [topPostIdStored, setTopPostIdStored]);
 
     return (
         <PostsContainer>

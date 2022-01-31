@@ -1,4 +1,4 @@
-const callApi = async (url: string) => {
+export const callApi = async (url: string) => {
     try {
         const response = await fetch(url);
 
@@ -10,5 +10,3 @@ const callApi = async (url: string) => {
         return { error }
     }
 }
-
-export default callApi
