@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Container, styled } from '@mui/material';
 
-import Posts from './components/Posts'
+import Posts from './components/posts'
 
 const StyledContainer = styled(Container)`
   background-color: #dff0dc;

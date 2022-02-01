@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { styled, Typography, Radio } from '@mui/material';
-import { DataGrid, GridOverlay, GridColDef, GridRenderCellParams, GridRowId } from '@mui/x-data-grid';
+import { styled, Typography } from '@mui/material';
+import { DataGrid, GridOverlay, GridRowId } from '@mui/x-data-grid';
 import moment from 'moment-timezone';
 
-import { postsLink } from '../constants';
-import { DataGridPost, Post } from '../types';
-import { callApi, useLocalStorage } from '../services';
+import { postsLink } from '../../constants';
+import { DataGridPost } from '../../types';
+import { callApi, useLocalStorage } from '../../services';
+import { getDataGridPosts, getColumns, getPostSelectionText } from './utils';
 
 const PostsContainer = styled('div')`
     position: relative;
@@ -20,56 +21,11 @@ const StyledDataGrid = styled(DataGrid)`
     background: #deeefcc4;
 `
 
-const CellContainer = styled('span')`
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-`
-
 const InfoContainer = styled('div')`
     display: flex;
     justify-content: space-between;
     margin-bottom: 12px;
 `
-
-const getColumns = (onSelectTopPostId: (topPostId: string) => void, topPostId?: string): GridColDef[] => ([
-    { field: 'id', headerName: 'Id', align: 'center', width: 50 },
-    {
-        field: 'shortTitle', headerName: 'Title', flex: 0.2, renderCell: (params: GridRenderCellParams) => (
-            <CellContainer>
-                {params.value}
-            </CellContainer>
-        )
-    },
-    {
-        field: 'shortBody', headerName: 'Body', flex: 0.3, renderCell: (params: GridRenderCellParams) => (
-            <CellContainer>
-                {params.value}
-            </CellContainer>
-        ),
-    },
-    {
-        field: 'isTopRatedPost',
-        headerName: 'Top Rated Post',
-        align: 'center',
-        width: 130,
-        renderCell: (params: GridRenderCellParams) => (
-            <Radio checked={Number(topPostId) === params.id} value={params.id} onChange={(event) => {
-                onSelectTopPostId(event.target.value)
-            }} />
-        ),
-    }
-])
-
-const maxTextChars = 120;
-
-const shortenText = (text: string) => text.length > maxTextChars ? (text.substr(0, maxTextChars) + "\u2026") : text;
-
-const getDataGridPosts = (posts: Post[]): DataGridPost[] => posts.map(post => ({
-    ...post,
-    shortTitle: shortenText(post.title),
-    shortBody: shortenText(post.body),
-}))
 
 const Posts: React.FC = () => {
     const [topPostId, setTopPostId] = useLocalStorage('topPostId', '');
@@ -97,19 +53,7 @@ const Posts: React.FC = () => {
 
     const columns = useMemo(() => getColumns(onSelectTopPostId, topPostId), [topPostId, onSelectTopPostId]);
 
-    const postSelectionText = useMemo(() => {
-        if (isLoading || !posts.length) {
-            return ''
-        }
-        if (!selectedPosts.length) {
-            return 'No posts selected'
-        }
-        if (selectedPosts.length === posts.length) {
-            return 'All posts selected'
-        }
-
-        return `Selected ${selectedPosts.length} posts out of ${posts.length}`
-    }, [selectedPosts.length, posts.length, isLoading]);
+    const postSelectionText = useMemo(() => getPostSelectionText(isLoading, selectedPosts.length, posts.length), [selectedPosts.length, posts.length, isLoading]);
 
     return (
         <PostsContainer>
