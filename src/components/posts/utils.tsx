@@ -1,5 +1,5 @@
-import {  GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { styled,  Radio } from '@mui/material';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { styled, Radio } from '@mui/material';
 
 import { DataGridPost, Post } from '../../types';
 import { maxTextChars } from './constants';
@@ -11,16 +11,27 @@ const CellContainer = styled('span')`
 `
 
 export const getColumns = (onSelectTopPostId: (topPostId: string) => void, topPostId?: string): GridColDef[] => ([
-    { field: 'id', headerName: 'Id', align: 'center', width: 50 },
     {
-        field: 'shortTitle', headerName: 'Title', flex: 0.2, renderCell: (params: GridRenderCellParams) => (
+        field: 'id',
+        headerName: 'Id',
+        align: 'center',
+        width: 50
+    },
+    {
+        field: 'shortTitle',
+        headerName: 'Title',
+        flex: 0.2,
+        renderCell: (params: GridRenderCellParams) => (
             <CellContainer>
                 {params.value}
             </CellContainer>
         )
     },
     {
-        field: 'shortBody', headerName: 'Body', flex: 0.3, renderCell: (params: GridRenderCellParams) => (
+        field: 'shortBody',
+        headerName: 'Body',
+        flex: 0.3,
+        renderCell: (params: GridRenderCellParams) => (
             <CellContainer>
                 {params.value}
             </CellContainer>
@@ -31,6 +42,7 @@ export const getColumns = (onSelectTopPostId: (topPostId: string) => void, topPo
         headerName: 'Top Rated Post',
         align: 'center',
         width: 130,
+        sortable: false,
         renderCell: (params: GridRenderCellParams) => (
             <Radio checked={Number(topPostId) === params.id} value={params.id} onChange={(event) => {
                 onSelectTopPostId(event.target.value)
