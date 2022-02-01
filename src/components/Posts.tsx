@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { styled, Typography, Radio } from '@mui/material';
-import { DataGrid, GridOverlay, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, GridOverlay, GridColDef, GridRenderCellParams, GridRowId } from '@mui/x-data-grid';
 import moment from 'moment-timezone';
 
 import { postsLink } from '../constants';
@@ -74,6 +74,7 @@ const getDataGridPosts = (posts: Post[]): DataGridPost[] => posts.map(post => ({
 const Posts: React.FC = () => {
     const [topPostId, setTopPostId] = useLocalStorage('topPostId', '');
     const [topPostTime, setTopPostTime] = useLocalStorage('topPostTime', '');
+    const [selectedPosts, setSelectedPosts] = useLocalStorage<GridRowId[]>('selectedPosts', []);
 
     const [isLoading, setIsLoading] = useState(true);
     const [posts, setPosts] = useState<DataGridPost[]>([]);
@@ -96,11 +97,22 @@ const Posts: React.FC = () => {
 
     const columns = useMemo(() => getColumns(onSelectTopPostId, topPostId), [topPostId, onSelectTopPostId]);
 
+    const postSelectionText = useMemo(() => {
+        if (!selectedPosts.length) {
+            return 'No posts selected'
+        }
+        if (selectedPosts.length === posts.length) {
+            return 'All posts selected'
+        }
+
+        return `Selected ${selectedPosts.length} posts out of ${posts.length}`
+    }, [selectedPosts.length, posts.length]);
+
     return (
         <PostsContainer>
             <InfoContainer>
                 <Typography>
-                    No posts selected
+                    {!isLoading && postSelectionText}
                 </Typography>
                 <div>
                     <Typography>
@@ -111,11 +123,23 @@ const Posts: React.FC = () => {
                     </Typography>
                 </div>
             </InfoContainer>
-            <StyledDataGrid columns={columns} rows={posts} loading={isLoading} checkboxSelection hideFooter disableSelectionOnClick initialState={{
-                sorting: {
-                    sortModel: [{ field: 'shortTitle', sort: 'asc' }],
-                },
-            }}
+            <StyledDataGrid
+                columns={columns}
+                rows={posts}
+                loading={isLoading}
+                onSelectionModelChange={(model) => {
+                    !isLoading && setSelectedPosts(model)
+                }}
+                selectionModel={selectedPosts}
+                checkboxSelection
+                hideFooter
+                disableSelectionOnClick
+                disableColumnMenu
+                initialState={{
+                    sorting: {
+                        sortModel: [{ field: 'shortTitle', sort: 'asc' }],
+                    },
+                }}
                 components={{
                     NoRowsOverlay: () => <GridOverlay><Typography color="red">Posts didn't load, please try again later...</Typography>
                     </GridOverlay>
