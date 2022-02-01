@@ -1,14 +1,8 @@
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { styled, Radio } from '@mui/material';
+import { Radio } from '@mui/material';
 
 import { DataGridPost, Post } from '../../types';
 import { maxTextChars } from './constants';
-
-const CellContainer = styled('span')`
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-`
 
 export const getColumns = (onSelectTopPostId: (topPostId: string) => void, topPostId?: string): GridColDef[] => ([
     {
@@ -21,21 +15,11 @@ export const getColumns = (onSelectTopPostId: (topPostId: string) => void, topPo
         field: 'shortTitle',
         headerName: 'Title',
         flex: 0.2,
-        renderCell: (params: GridRenderCellParams) => (
-            <CellContainer>
-                {params.value}
-            </CellContainer>
-        )
     },
     {
         field: 'shortBody',
         headerName: 'Body',
         flex: 0.3,
-        renderCell: (params: GridRenderCellParams) => (
-            <CellContainer>
-                {params.value}
-            </CellContainer>
-        ),
     },
     {
         field: 'isTopRatedPost',

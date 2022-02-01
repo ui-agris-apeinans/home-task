@@ -19,6 +19,11 @@ const PostsContainer = styled('div')`
 
 const StyledDataGrid = styled(DataGrid)`
     background: #deeefcc4;
+    
+    .MuiDataGrid-cell {
+        font-size: 12px;
+        white-space: normal;
+    }
 `
 
 const InfoContainer = styled('div')`
@@ -82,6 +87,7 @@ const Posts: React.FC = () => {
                 hideFooter
                 disableSelectionOnClick
                 disableColumnMenu
+                rowHeight={70}
                 initialState={{
                     sorting: {
                         sortModel: [{ field: 'shortTitle', sort: 'asc' }],
