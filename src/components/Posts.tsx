@@ -13,7 +13,11 @@ const PostsContainer = styled('div')`
     flex: 1;
     flex-direction: column;
     justify-content: center;
-    margin-top: 12px;
+    margin: 12px 0 18px 0;
+`
+
+const StyledDataGrid = styled(DataGrid)`
+    background: #deeefcc4;
 `
 
 const CellContainer = styled('span')`
@@ -103,11 +107,11 @@ const Posts: React.FC = () => {
                         Top Rated Post change time:
                     </Typography>
                     <Typography>
-                        {topPostTime ? moment.tz(Number(topPostTime), 'EET').format("YYYY.MM.DD. HH:mm") : '-'}
+                        {topPostTime ? moment.tz(Number(topPostTime), 'EET').format("YYYY.MM.DD. HH:mm (z)") : '-'}
                     </Typography>
                 </div>
             </InfoContainer>
-            <DataGrid columns={columns} rows={posts} loading={isLoading} initialState={{
+            <StyledDataGrid columns={columns} rows={posts} loading={isLoading} checkboxSelection hideFooter disableSelectionOnClick initialState={{
                 sorting: {
                     sortModel: [{ field: 'shortTitle', sort: 'asc' }],
                 },

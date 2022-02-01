@@ -12,7 +12,7 @@ const StyledContainer = styled(Container)`
 
 const App: React.FC = () => (
   <StyledContainer>
-    <Typography variant="h4" align="center" paddingTop="12px">Posts</Typography>
+    <Typography variant="h4" align="center" paddingTop="12px">Posts Table</Typography>
     <Posts />
   </StyledContainer>
 )
