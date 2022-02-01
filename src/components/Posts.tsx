@@ -98,6 +98,9 @@ const Posts: React.FC = () => {
     const columns = useMemo(() => getColumns(onSelectTopPostId, topPostId), [topPostId, onSelectTopPostId]);
 
     const postSelectionText = useMemo(() => {
+        if (isLoading || !posts.length) {
+            return ''
+        }
         if (!selectedPosts.length) {
             return 'No posts selected'
         }
@@ -106,13 +109,13 @@ const Posts: React.FC = () => {
         }
 
         return `Selected ${selectedPosts.length} posts out of ${posts.length}`
-    }, [selectedPosts.length, posts.length]);
+    }, [selectedPosts.length, posts.length, isLoading]);
 
     return (
         <PostsContainer>
             <InfoContainer>
                 <Typography>
-                    {!isLoading && postSelectionText}
+                    {postSelectionText}
                 </Typography>
                 <div>
                     <Typography>
