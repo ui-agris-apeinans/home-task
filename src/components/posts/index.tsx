@@ -2,10 +2,11 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { styled, Typography } from '@mui/material';
 import { DataGrid, GridOverlay, GridRowId } from '@mui/x-data-grid';
 import moment from 'moment-timezone';
+import { useLocalStorage } from 'usehooks-ts';
 
 import { postsLink } from '../../constants';
 import { DataGridPost } from '../../types';
-import { callApi, useLocalStorage } from '../../services';
+import { callApi } from '../../services';
 import { getDataGridPosts, getColumns, getPostSelectionText } from './utils';
 
 const PostsContainer = styled('div')`
