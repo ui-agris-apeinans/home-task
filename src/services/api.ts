@@ -1,3 +1,5 @@
+export const defaultError = { error: 'Unexpected error occurred' }
+
 export const callApi = async (url: string) => {
     try {
         const response = await fetch(url);
@@ -5,8 +7,8 @@ export const callApi = async (url: string) => {
         if (response.ok) {
             return await response.json();
         }
-        return { error: response.status }
+        return defaultError
     } catch (error) {
-        return { error }
+        return defaultError
     }
 }
