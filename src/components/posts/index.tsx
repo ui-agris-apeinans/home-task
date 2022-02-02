@@ -87,7 +87,7 @@ const Posts: React.FC = () => {
                 hideFooter
                 disableSelectionOnClick
                 disableColumnMenu
-                rowHeight={70}
+                rowHeight={75}
                 initialState={{
                     sorting: {
                         sortModel: [{ field: 'shortTitle', sort: 'asc' }],
