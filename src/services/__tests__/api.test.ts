@@ -1,16 +1,11 @@
 import { callApi, defaultError } from '../api';
+import { mockPosts } from '../../__mocks__/posts';
 
 beforeEach(() => {
     fetchMock.resetMocks();
 });
 
 const mockUrl = 'api';
-const mockPosts = [{
-    id: 1,
-    title: 'title',
-    userId: '2',
-    body: 'body',
-}];
 
 test('callApi should call passed url and return posts array', async () => {
     fetchMock.mockResponseOnce(JSON.stringify(mockPosts));
