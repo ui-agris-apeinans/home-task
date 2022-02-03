@@ -11,7 +11,7 @@ const StyledContainer = styled(Container)`
 `
 
 const App: React.FC = () => (
-  <StyledContainer>
+  <StyledContainer data-testid="app">
     <Typography variant="h4" align="center" paddingTop="12px">Posts Table</Typography>
     <Posts />
   </StyledContainer>

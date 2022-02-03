@@ -93,7 +93,7 @@ const Posts: React.FC = () => {
     const postSelectionText = useMemo(() => getPostSelectionText(isLoading, selectedPosts.length, posts.length), [selectedPosts.length, posts.length, isLoading]);
 
     return (
-        <PostsContainer>
+        <PostsContainer data-testid="posts">
             <InfoContainer>
                 <Typography>
                     {postSelectionText}

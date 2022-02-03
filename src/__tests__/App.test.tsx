@@ -1,9 +1,12 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
+
 import App from '../App';
 
-test('renders App with correct title', () => {
+test('App renders with correct title', () => {
   render(<App />);
-  const title = screen.getByText(/Posts Table/i);
+  const appElement = screen.getByTestId('app');
+  const title = screen.getByText('Posts Table');
+
+  expect(appElement).toBeInTheDocument();
   expect(title).toBeInTheDocument();
 });
