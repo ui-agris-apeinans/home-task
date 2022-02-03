@@ -4,7 +4,7 @@ import { DataGrid, GridOverlay, GridRowId, GridRenderCellParams, GridColDef } fr
 import moment from 'moment-timezone';
 import { useLocalStorage } from 'usehooks-ts';
 
-import { postsLink } from '../../constants';
+import { postsLink, failToLoadMessage } from './constants';
 import { DataGridPost } from '../../types';
 import { callApi } from '../../services';
 import { getDataGridPosts, getPostSelectionText } from './utils';
@@ -126,7 +126,7 @@ const Posts: React.FC = () => {
                     },
                 }}
                 components={{
-                    NoRowsOverlay: () => <GridOverlay><Typography color="red">Posts didn't load, please try again later...</Typography>
+                    NoRowsOverlay: () => <GridOverlay><Typography color="red">{failToLoadMessage}</Typography>
                     </GridOverlay>
                 }}
             />
