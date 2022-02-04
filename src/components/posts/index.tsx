@@ -33,7 +33,7 @@ const InfoContainer = styled('div')`
     margin-bottom: 12px;
 `
 
-const getColumns = (onSelectTopPostId: (topPostId: string, timeStamp: number) => void, topPostId?: string): GridColDef[] => ([
+const getColumns = (onSelectTopPostId: (topPostId: string) => void, topPostId?: string): GridColDef[] => ([
     {
         field: 'id',
         headerName: 'Id',
@@ -61,7 +61,7 @@ const getColumns = (onSelectTopPostId: (topPostId: string, timeStamp: number) =>
         sortable: false,
         renderCell: (params: GridRenderCellParams) => (
             <Radio checked={Number(topPostId) === params.id} value={params.id} onChange={(event) => {
-                onSelectTopPostId(event.target.value, event.timeStamp)
+                onSelectTopPostId(event.target.value)
             }} />
         ),
     }
@@ -90,9 +90,9 @@ const Posts: React.FC = () => {
         }
     }, []);
 
-    const onSelectTopPostId = useCallback((value: string, timeStamp: number) => {
+    const onSelectTopPostId = useCallback((value: string) => {
         setTopPostId(value);
-        setTopPostTime(new Date(timeStamp).getTime().toString())
+        setTopPostTime(new Date().getTime().toString())
     }, [])
 
     const columns = useMemo(() => getColumns(onSelectTopPostId, topPostId), [topPostId, onSelectTopPostId]);

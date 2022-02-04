@@ -71,11 +71,10 @@ describe('Posts', () => {
 
         expect(firstRow.getElementsByClassName('Mui-checked').length).toBe(1);
         expect(JSON.parse(localStorage.getItem(LocalStorageKeys.TopPostId) as string)).toEqual("1");
-        expect(JSON.parse(localStorage.getItem(LocalStorageKeys.TopPostTime) as string)).toEqual(event.timeStamp.toString());
+        expect(JSON.parse(localStorage.getItem(LocalStorageKeys.TopPostTime) as string).slice(0, -3)).toEqual(event.timeStamp.toString().slice(0, -3));
 
         // shows top rated post time in EET format
         expect(topPostTimeElement).toHaveTextContent(moment.tz(event.timeStamp, 'EET').format(timeFormat))
-
     });
 
     test('calls renders failure message on failed fetch', async () => {
