@@ -24,6 +24,7 @@ const StyledDataGrid = styled(DataGrid)`
     .MuiDataGrid-cell {
         font-size: 12px;
         white-space: normal;
+        flex-wrap: wrap;
     }
 `
 
