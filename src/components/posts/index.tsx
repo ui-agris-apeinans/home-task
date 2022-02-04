@@ -4,7 +4,7 @@ import { DataGrid, GridOverlay, GridRowId, GridRenderCellParams, GridColDef } fr
 import moment from 'moment-timezone';
 import { useLocalStorage } from 'usehooks-ts';
 
-import { postsLink, failToLoadMessage } from './constants';
+import { postsLink, failToLoadMessage, LocalStorageKeys, timeFormat } from './constants';
 import { DataGridPost } from '../../types';
 import { callApi } from '../../services';
 import { getDataGridPosts, getPostSelectionText } from './utils';
@@ -33,7 +33,7 @@ const InfoContainer = styled('div')`
     margin-bottom: 12px;
 `
 
-const getColumns = (onSelectTopPostId: (topPostId: string) => void, topPostId?: string): GridColDef[] => ([
+const getColumns = (onSelectTopPostId: (topPostId: string, timeStamp: number) => void, topPostId?: string): GridColDef[] => ([
     {
         field: 'id',
         headerName: 'Id',
@@ -58,34 +58,38 @@ const getColumns = (onSelectTopPostId: (topPostId: string) => void, topPostId?: 
         sortable: false,
         renderCell: (params: GridRenderCellParams) => (
             <Radio checked={Number(topPostId) === params.id} value={params.id} onChange={(event) => {
-                onSelectTopPostId(event.target.value)
+                onSelectTopPostId(event.target.value, event.timeStamp)
             }} />
         ),
     }
 ])
 
 const Posts: React.FC = () => {
-    const [topPostId, setTopPostId] = useLocalStorage('topPostId', '');
-    const [topPostTime, setTopPostTime] = useLocalStorage('topPostTime', '');
-    const [selectedPosts, setSelectedPosts] = useLocalStorage<GridRowId[]>('selectedPosts', []);
+    const [topPostId, setTopPostId] = useLocalStorage(LocalStorageKeys.TopPostId, '');
+    const [topPostTime, setTopPostTime] = useLocalStorage(LocalStorageKeys.TopPostTime, '');
+    const [selectedPosts, setSelectedPosts] = useLocalStorage<GridRowId[]>(LocalStorageKeys.SelectedPosts, []);
 
     const [isLoading, setIsLoading] = useState(true);
     const [posts, setPosts] = useState<DataGridPost[]>([]);
 
     useEffect(() => {
+        let timeout: ReturnType<typeof setTimeout>;
         callApi(postsLink).then(response => {
-            setTimeout(() => {
+            timeout = setTimeout(() => {
                 setIsLoading(false);
                 if (!response.error) {
                     setPosts(getDataGridPosts(response))
                 };
             }, 450)
-        })
+        });
+        return () => {
+            timeout && clearTimeout(timeout)
+        }
     }, []);
 
-    const onSelectTopPostId = useCallback((value: string) => {
+    const onSelectTopPostId = useCallback((value: string, timeStamp: number) => {
         setTopPostId(value);
-        setTopPostTime(new Date().getTime().toString())
+        setTopPostTime(new Date(timeStamp).getTime().toString())
     }, [])
 
     const columns = useMemo(() => getColumns(onSelectTopPostId, topPostId), [topPostId, onSelectTopPostId]);
@@ -95,15 +99,15 @@ const Posts: React.FC = () => {
     return (
         <PostsContainer data-testid="posts">
             <InfoContainer>
-                <Typography>
+                <Typography data-testid="selectedPosts">
                     {postSelectionText}
                 </Typography>
                 <div>
                     <Typography>
                         Top Rated Post change time:
                     </Typography>
-                    <Typography>
-                        {topPostTime ? moment.tz(Number(topPostTime), 'EET').format("YYYY.MM.DD. HH:mm (z)") : '-'}
+                    <Typography data-testid="topPostTime">
+                        {topPostTime ? moment.tz(Number(topPostTime), 'EET').format(timeFormat) : '-'}
                     </Typography>
                 </div>
             </InfoContainer>
@@ -120,6 +124,7 @@ const Posts: React.FC = () => {
                 disableSelectionOnClick
                 disableColumnMenu
                 rowHeight={75}
+                columnBuffer={5}
                 initialState={{
                     sorting: {
                         sortModel: [{ field: 'shortTitle', sort: 'asc' }],
