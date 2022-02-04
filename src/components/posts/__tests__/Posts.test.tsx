@@ -1,5 +1,5 @@
 import { render, screen, cleanup, waitFor, fireEvent, createEvent } from '@testing-library/react';
-import { prettyDOM, queryHelpers } from '@testing-library/dom';
+import { queryHelpers } from '@testing-library/dom';
 import moment from 'moment-timezone';
 
 import { mockPosts, mockDataGridPosts } from '../../../__mocks__/posts';
@@ -16,7 +16,7 @@ const queryByRowIndex = queryHelpers.queryByAttribute.bind(
 );
 
 describe('Posts', () => {
-    callApi.mockReturnValue(Promise.resolve(mockPosts));
+    (callApi as jest.MockedFunction<typeof callApi>).mockReturnValue(Promise.resolve(mockPosts));
 
     test('renders', () => {
         render(<Posts />);
@@ -44,14 +44,16 @@ describe('Posts', () => {
         expect(selectedPostsElement).toHaveTextContent('No posts selected');
 
         // selecting posts checkbox works and saves in localstorage
-        const firstRow = queryByRowIndex(postsElement, '0');
-        const checkbox = firstRow.querySelector('input[type="checkbox"]');
+        const firstRow = queryByRowIndex(postsElement, '0') as HTMLElement;
+        const checkbox = firstRow.querySelector('input[type="checkbox"]') as HTMLInputElement;
 
         expect(checkbox.checked).toEqual(false);
         fireEvent.click(checkbox);
         expect(checkbox.checked).toEqual(true);
         expect(localStorage.getItem(LocalStorageKeys.SelectedPosts)).toEqual('[1]');
 
+        // post count shows in post info
+        expect(selectedPostsElement).toHaveTextContent('All posts selected');
 
         // setting posts checkbox off sets removes item from localstorage
         fireEvent.click(checkbox);
@@ -59,8 +61,8 @@ describe('Posts', () => {
         expect(localStorage.getItem(LocalStorageKeys.SelectedPosts)).toEqual('[]');
 
         // setting top rated post radio on sets works and saves in localstorage
-        const toggleContainer = firstRow.querySelector('.MuiRadio-root');
-        const toggle = firstRow.querySelector('input[type="radio"]');
+        const toggleContainer = firstRow.querySelector('.MuiRadio-root') as HTMLElement;
+        const toggle = firstRow.querySelector('input[type="radio"]') as HTMLInputElement;
 
         expect(toggleContainer.querySelector('.Mui-checked')).toEqual(null);
 
@@ -68,8 +70,8 @@ describe('Posts', () => {
         fireEvent.click(toggle, event);
 
         expect(firstRow.getElementsByClassName('Mui-checked').length).toBe(1);
-        expect(JSON.parse(localStorage.getItem(LocalStorageKeys.TopPostId))).toEqual("1");
-        expect(JSON.parse(localStorage.getItem(LocalStorageKeys.TopPostTime))).toEqual(event.timeStamp.toString());
+        expect(JSON.parse(localStorage.getItem(LocalStorageKeys.TopPostId) as string)).toEqual("1");
+        expect(JSON.parse(localStorage.getItem(LocalStorageKeys.TopPostTime) as string)).toEqual(event.timeStamp.toString());
 
         // shows top rated post time in EET format
         expect(topPostTimeElement).toHaveTextContent(moment.tz(event.timeStamp, 'EET').format(timeFormat))
@@ -77,13 +79,10 @@ describe('Posts', () => {
     });
 
     test('calls renders failure message on failed fetch', async () => {
-        callApi.mockReturnValueOnce(Promise.resolve(defaultError));
+        (callApi as jest.MockedFunction<typeof callApi>).mockReturnValueOnce(Promise.resolve(defaultError));
         render(<Posts />);
 
         const failToLoadMessageElement = await waitFor(() => screen.getByText(failToLoadMessage));
         expect(failToLoadMessageElement).toBeInTheDocument();
     });
-
-    // test if posts selection text works
-    // test localstorage to return something on first render if saved
 })
