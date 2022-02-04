@@ -38,17 +38,20 @@ const getColumns = (onSelectTopPostId: (topPostId: string, timeStamp: number) =>
         field: 'id',
         headerName: 'Id',
         align: 'center',
-        width: 50
+        width: 50,
+        sortable: false,
     },
     {
         field: 'shortTitle',
         headerName: 'Title',
         flex: 0.2,
+        sortable: false,
     },
     {
         field: 'shortBody',
         headerName: 'Body',
         flex: 0.3,
+        sortable: false,
     },
     {
         field: 'isTopRatedPost',
